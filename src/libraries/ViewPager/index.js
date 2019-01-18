@@ -9,6 +9,7 @@ import {
 import PropTypes from 'prop-types';
 import Scroller from '../Scroller';
 import { createResponder } from '../GestureResponder';
+import {PaddedScrollView} from '../PaddedScrollView'
 
 const MIN_FLING_VELOCITY = 0.5;
 
@@ -40,7 +41,9 @@ export default class ViewPager extends PureComponent {
         pageDataArray: [],
         initialListSize: 10,
         removeClippedSubviews: true,
-        flatListProps: {}
+        flatListProps: {},
+        leftPadding: 0,
+        offset: 0,
     };
 
     currentPage = undefined; // Do not initialize to make onPageSelected(0) be dispatched
@@ -300,7 +303,7 @@ export default class ViewPager extends PureComponent {
 
     render () {
         const { width, height } = this.state;
-        const { pageDataArray, scrollEnabled, style, scrollViewStyle } = this.props;
+        const { pageDataArray, scrollEnabled, style, scrollViewStyle, offset, leftPadding } = this.props;
 
         if (width && height) {
             let list = pageDataArray;
@@ -335,6 +338,7 @@ export default class ViewPager extends PureComponent {
                   // https://github.com/facebook/react-native/issues/15734#issuecomment-330616697 and
                   // https://github.com/facebook/react-native/issues/14945#issuecomment-354651271
                   contentOffset = {{x: this.getScrollOffsetOfPage(parseInt(this.props.initialPage)), y:0}}
+                  renderScrollComponent={leftPadding > 0 ? (props) => <PaddedScrollView {...props} leftPadding={leftPadding} offset={offset}/> : null}
               />
             </View>
         );

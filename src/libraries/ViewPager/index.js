@@ -93,7 +93,8 @@ export default class ViewPager extends PureComponent {
             onResponderGrant: this.onResponderGrant,
             onResponderMove: this.onResponderMove,
             onResponderRelease: this.onResponderRelease,
-            onResponderTerminate: this.onResponderRelease
+            onResponderTerminate: this.onResponderRelease,
+          // debug: true
         });
     }
 
@@ -257,7 +258,7 @@ export default class ViewPager extends PureComponent {
         // https://github.com/facebook/react-native/issues/15734#issuecomment-330616697
         return {
             length: this.state.width + this.props.pageMargin,
-            offset: (this.state.width + this.props.pageMargin) * index,
+            offset: this.props.offset + (this.state.width + this.props.pageMargin) * index,
             index
         };
     }

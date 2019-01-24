@@ -44,6 +44,7 @@ export default class ViewPager extends PureComponent {
         flatListProps: {},
         leftPadding: 0,
         offset: 0,
+        immediateScrollOnUpdate: true
     };
 
     currentPage = undefined; // Do not initialize to make onPageSelected(0) be dispatched
@@ -130,10 +131,10 @@ export default class ViewPager extends PureComponent {
             }
         } else if (this.currentPage + 1 >= this.props.pageDataArray.length &&
             this.props.pageDataArray.length !== prevProps.pageDataArray.length) {
-            this.scrollToPage(this.props.pageDataArray.length, true);
+            this.scrollToPage(this.props.pageDataArray.length, this.props.immediateScrollOnUpdate);
         }
         if(this.props.enforceInitialPage && this.currentPage !== this.props.initialPage) {
-            this.scrollToPage(this.props.initialPage, true);
+            this.scrollToPage(this.props.initialPage, this.props.immediateScrollOnUpdate);
         }
     }
 

@@ -201,8 +201,10 @@ export default class ViewPager extends PureComponent {
             } else if (progress < -1 / 3) {
                 page -= 1;
             }
+            page = this.getPageIndex(page)
             page = Math.min(pageDataArray.length - 1, page);
             page = Math.max(0, page);
+            page = this.getRelativePageIndex(page)
             this.scrollToPage(page);
         }
     }

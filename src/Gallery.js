@@ -27,7 +27,8 @@ export default class Gallery extends PureComponent {
         imageComponent: PropTypes.func,
         enableZoom: PropTypes.bool,
         errorComponent: PropTypes.func,
-        flatListProps: PropTypes.object
+        flatListProps: PropTypes.object,
+        fixedPage: PropTypes.number
     };
 
     static defaultProps = {
@@ -36,7 +37,8 @@ export default class Gallery extends PureComponent {
         enforceInitialPage: false,
         imageComponent: undefined,
         scrollViewStyle: {},
-        flatListProps: DEFAULT_FLAT_LIST_PROPS
+        flatListProps: DEFAULT_FLAT_LIST_PROPS,
+        fixedPage: 0
     };
 
     imageRefs = new Map();
@@ -176,10 +178,11 @@ export default class Gallery extends PureComponent {
         const space = viewTransformer.getAvailableTranslateSpace();
         const dx = gestureState.moveX - gestureState.previousMoveX;
 
-        if (dx > 0 && space.left <= 0 && this.currentPage > 0) {
+        let currentPage = this.getPageIndex(this.currentPage)
+        if (dx > 0 && space.left <= 0 && currentPage > 0) {
             return true;
         }
-        if (dx < 0 && space.right <= 0 && this.currentPage < this.pageCount - 1) {
+        if (dx < 0 && space.right <= 0 && currentPage < this.pageCount - 1) {
             return true;
         }
         return false;
@@ -206,6 +209,7 @@ export default class Gallery extends PureComponent {
     }
 
     getImageTransformer (page) {
+        page = this.getPageIndex(page)
         if (page >= 0 && page < this.pageCount) {
             let ref = this.imageRefs.get(page);
             if (ref) {
@@ -298,5 +302,9 @@ export default class Gallery extends PureComponent {
               removeClippedSubviews={this.props.removeClippedSubviews}
             />
         );
+    }
+
+    getPageIndex (index) {
+        return this.props.fixedPage + index
     }
 }

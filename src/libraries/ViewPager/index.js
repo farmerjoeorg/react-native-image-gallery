@@ -31,7 +31,8 @@ export default class ViewPager extends PureComponent {
         onPageSelected: PropTypes.func,
         onPageScrollStateChanged: PropTypes.func,
         onPageScroll: PropTypes.func,
-        flatListProps: PropTypes.object
+        flatListProps: PropTypes.object,
+        fixedPage: PropTypes.number
     };
 
     static defaultProps = {
@@ -44,7 +45,8 @@ export default class ViewPager extends PureComponent {
         flatListProps: {},
         leftPadding: 0,
         offset: 0,
-        immediateScrollOnUpdate: true
+        immediateScrollOnUpdate: true,
+        fixedPage: 0
     };
 
     currentPage = undefined; // Do not initialize to make onPageSelected(0) be dispatched
@@ -129,7 +131,7 @@ export default class ViewPager extends PureComponent {
             if (typeof this.currentPage === 'number') {
                 this.scrollToPage(this.currentPage, true);
             }
-        } else if (this.currentPage + 1 >= this.props.pageDataArray.length &&
+        } else if (this.getPageIndex(this.currentPage) + 1 >= this.props.pageDataArray.length &&
             this.props.pageDataArray.length !== prevProps.pageDataArray.length) {
             this.scrollToPage(this.props.pageDataArray.length, this.props.immediateScrollOnUpdate);
         }
@@ -180,13 +182,13 @@ export default class ViewPager extends PureComponent {
         const { pageDataArray } = this.props;
 
         if (vx < -MIN_FLING_VELOCITY) {
-            if (this.currentPage < pageDataArray.length - 1) {
+            if (this.getPageIndex(this.currentPage) < pageDataArray.length - 1) {
                 this.flingToPage(this.currentPage + 1, vx);
             } else {
                 this.flingToPage(pageDataArray.length - 1, vx);
             }
         } else if (vx > MIN_FLING_VELOCITY) {
-            if (this.currentPage > 0) {
+            if (this.getPageIndex(this.currentPage) > 0) {
                 this.flingToPage(this.currentPage - 1, vx);
             } else {
                 this.flingToPage(0, vx);
@@ -262,7 +264,7 @@ export default class ViewPager extends PureComponent {
         // https://github.com/facebook/react-native/issues/15734#issuecomment-330616697
         return {
             length: this.state.width + this.props.pageMargin,
-            offset: this.props.offset + (this.state.width + this.props.pageMargin) * index,
+            offset: this.props.offset + (this.state.width + this.props.pageMargin) * this.getPageIndex(index),
             index
         };
     }
@@ -343,5 +345,9 @@ export default class ViewPager extends PureComponent {
               />
             </View>
         );
+    }
+
+    getPageIndex (index) {
+        return this.props.fixedPage + index
     }
 }

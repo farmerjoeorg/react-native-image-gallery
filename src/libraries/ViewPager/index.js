@@ -79,7 +79,7 @@ export default class ViewPager extends PureComponent {
                 const curX = this.scroller.getCurrX();
                 this.refs['innerFlatList'] && this.refs['innerFlatList'].scrollToOffset({ offset: curX, animated: false });
 
-                let position = Math.floor(curX / (this.state.width + this.props.pageMargin));
+              let position = Math.floor((curX - this.props.offset) / (this.state.width + this.props.pageMargin))
                 position = this.validPage(position);
                 let offset = (curX - this.getScrollOffsetOfPage(position)) / (this.state.width + this.props.pageMargin);
                 let fraction = (curX - this.getScrollOffsetOfPage(position) - this.props.pageMargin) / this.state.width;
@@ -245,9 +245,10 @@ export default class ViewPager extends PureComponent {
     }
 
     validPage (page) {
+        page = this.getPageIndex(page)
         page = Math.min(this.props.pageDataArray.length - 1, page);
         page = Math.max(0, page);
-        return page;
+        return this.getRelativePageIndex(page);
     }
 
     getScrollOffsetFromCurrentPage () {
@@ -349,5 +350,9 @@ export default class ViewPager extends PureComponent {
 
     getPageIndex (index) {
         return this.props.fixedPage + index
+    }
+
+    getRelativePageIndex (index) {
+      return index - this.props.fixedPage
     }
 }

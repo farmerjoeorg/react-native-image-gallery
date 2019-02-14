@@ -219,7 +219,7 @@ export default class ViewPager extends PureComponent {
         page = this.validPage(page);
         this.onPageChanged(page);
 
-        velocityX *= -1000; // per sec
+        velocityX *= -200; // per x ms
         const finalX = this.getScrollOffsetOfPage(page);
         this.scroller.fling(this.scroller.getCurrX(), 0, velocityX, 0, finalX, finalX, 0, 0);
     }

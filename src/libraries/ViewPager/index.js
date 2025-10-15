@@ -22,7 +22,7 @@ export default class ViewPager extends PureComponent {
         ...View.propTypes,
         initialPage: PropTypes.number,
         pageMargin: PropTypes.number,
-        scrollViewStyle: ViewPropTypes ? ViewPropTypes.style : View.propTypes.style,
+        scrollViewStyle: PropTypes.any,
         scrollEnabled: PropTypes.bool,
         renderPage: PropTypes.func,
         pageDataArray: PropTypes.array,
@@ -67,6 +67,7 @@ export default class ViewPager extends PureComponent {
         this.getItemLayout = this.getItemLayout.bind(this);
 
         this.scroller = this.createScroller();
+        this.innerFlatListRef = React.createRef();
     }
 
     createScroller () {
@@ -77,7 +78,8 @@ export default class ViewPager extends PureComponent {
                 }
             } else {
                 const curX = this.scroller.getCurrX();
-                this.refs['innerFlatList'] && this.refs['innerFlatList'].scrollToOffset({ offset: curX, animated: false });
+                if (this.innerFlatListRef)
+                    this.innerFlatListRef.current.scrollToOffset({ offset: curX, animated: false });
 
               let position = Math.floor((curX - this.props.offset) / (this.state.width + this.props.pageMargin))
                 position = this.validPage(position);
@@ -234,8 +236,10 @@ export default class ViewPager extends PureComponent {
         if (immediate) {
             InteractionManager.runAfterInteractions(() => {
                 this.scroller.startScroll(this.scroller.getCurrX(), 0, finalX - this.scroller.getCurrX(), 0, 0);
-                this.refs['innerFlatList'] && this.refs['innerFlatList'].scrollToOffset({offset: finalX, animated: false});
-                this.refs['innerFlatList'] && this.refs['innerFlatList'].recordInteraction();
+                if (this.innerFlatListRef.current) {
+                    this.innerFlatListRef.current.scrollToOffset({offset: finalX, animated: false});
+                    this.innerFlatListRef.current.recordInteraction();
+                }
             });
         } else {
             this.scroller.startScroll(this.scroller.getCurrX(), 0, finalX - this.scroller.getCurrX(), 0, 400);
@@ -331,7 +335,7 @@ export default class ViewPager extends PureComponent {
                 <FlatList
                   {...this.props.flatListProps}
                   style={[{ flex: 1 }, scrollViewStyle]}
-                  ref={'innerFlatList'}
+                  ref={this.innerFlatListRef}
                   keyExtractor={this.keyExtractor}
                   scrollEnabled={false}
                   horizontal={true}

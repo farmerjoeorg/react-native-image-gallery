@@ -15,7 +15,7 @@ export default class Gallery extends PureComponent {
         images: PropTypes.arrayOf(PropTypes.object),
         initialPage: PropTypes.number,
         enforceInitialPage: PropTypes.bool,
-        scrollViewStyle: ViewPropTypes ? ViewPropTypes.style : View.propTypes.style,
+        scrollViewStyle: PropTypes.any,
         pageMargin: PropTypes.number,
         onPageSelected: PropTypes.func,
         onPageScrollStateChanged: PropTypes.func,
@@ -57,8 +57,8 @@ export default class Gallery extends PureComponent {
         this.getViewPagerInstance = this.getViewPagerInstance.bind(this);
         this.getCurrentImageTransformer = this.getCurrentImageTransformer.bind(this);
         this.getImageTransformer = this.getImageTransformer.bind(this);
-        this.getViewPagerInstance = this.getViewPagerInstance.bind(this);
         this.activeImageResponder = this.activeImageResponder.bind(this);
+        this.galleryViewPagerRef = React.createRef()
     }
 
     componentWillMount () {
@@ -223,7 +223,7 @@ export default class Gallery extends PureComponent {
     }
 
     getViewPagerInstance () {
-        return this.refs['galleryViewPager'];
+        return this.galleryViewPagerRef.current;
     }
 
     onPageSelected (page) {
@@ -289,7 +289,7 @@ export default class Gallery extends PureComponent {
             <ViewPager
               {...this.props}
               flatListProps={flatListProps}
-              ref={'galleryViewPager'}
+              ref={this.galleryViewPagerRef}
               scrollViewStyle={this.props.scrollViewStyle}
               scrollEnabled={false}
               enforceInitialPage={this.props.enforceInitialPage}

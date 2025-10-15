@@ -5,6 +5,11 @@ import {
 } from 'react-native';
 
 export class PaddedScrollView extends PureComponent<> {
+  constructor (props) {
+    super(props);
+    this.scrollViewRef = React.createRef();
+  }
+
   render () {
     const {children, leftPadding, offset, ...restProps} = this.props
 
@@ -39,23 +44,23 @@ export class PaddedScrollView extends PureComponent<> {
       {/*}*/}
       {/*}))}*/}
     </View>
-    return <ScrollView ref="scrollView" {...restProps} children={wrapper}/>
+    return <ScrollView ref={this.scrollViewRef} {...restProps} children={wrapper}/>
   }
 
   scrollTo () {
-    return this.refs.scrollView.scrollTo.apply(this.refs.scrollView, arguments)
+    return this.scrollViewRef.current.scrollTo.apply(this.scrollViewRef.current, arguments)
   }
 
   scrollToEnd () {
-    return this.refs.scrollView.scrollToEnd.apply(this.refs.scrollView, arguments)
+    return this.scrollViewRef.current.scrollToEnd.apply(this.scrollViewRef.current, arguments)
   }
 
   scrollWithoutAnimationTo () {
-    return this.refs.scrollView.scrollWithoutAnimationTo.apply(this.refs.scrollView, arguments)
+    return this.scrollViewRef.current.scrollWithoutAnimationTo.apply(this.scrollViewRef.current, arguments)
   }
 
   flashScrollIndicators () {
-    return this.refs.scrollView.flashScrollIndicators.apply(this.refs.scrollView, arguments)
+    return this.scrollViewRef.current.flashScrollIndicators.apply(this.scrollViewRef.current, arguments)
   }
 
 }

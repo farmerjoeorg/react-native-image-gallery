@@ -12,7 +12,7 @@ export default class TransformableImage extends PureComponent {
             ]).isRequired,
             dimensions: PropTypes.shape({ width: PropTypes.number, height: PropTypes.number })
         }).isRequired,
-        style: ViewPropTypes ? ViewPropTypes.style : View.propTypes.style,
+        style: PropTypes.any,
         onLoad: PropTypes.func,
         onLoadStart: PropTypes.func,
         enableTransform: PropTypes.bool,
@@ -49,6 +49,7 @@ export default class TransformableImage extends PureComponent {
             imageDimensions: props.image.dimensions,
             keyAcumulator: 1
         };
+        this.viewTransformerRef = React.createRef();
     }
 
     componentWillMount () {
@@ -129,7 +130,7 @@ export default class TransformableImage extends PureComponent {
     }
 
     getViewTransformerInstance () {
-        return this.refs['viewTransformer'];
+        return this.viewTransformerRef.current;
     }
 
     renderError () {
@@ -176,7 +177,7 @@ export default class TransformableImage extends PureComponent {
 
         return (
             <ViewTransformer
-              ref={'viewTransformer'}
+              ref={this.viewTransformerRef}
               key={'viewTransformer#' + keyAccumulator} // when image source changes, we should use a different node to avoid reusing previous transform state
               enableTransform={enableTransform && imageLoaded} // disable transform until image is loaded
               enableScale={enableScale}

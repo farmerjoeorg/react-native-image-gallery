@@ -68,6 +68,7 @@ export default class ViewTransformer extends React.Component {
                 translateY: this.state.translateY + dy / this.state.scale
             });
         });
+        this.innerViewRef = React.createRef();
     }
 
     viewPortRect () {
@@ -133,7 +134,7 @@ export default class ViewTransformer extends React.Component {
             <View
               {...this.props}
               {...gestureResponder}
-              ref={'innerViewRef'}
+              ref={this.innerViewRef}
               onLayout={this.onLayout}>
                  <View
                    style={{
@@ -161,7 +162,13 @@ export default class ViewTransformer extends React.Component {
     }
 
     measureLayout () {
-        let handle = ReactNative.findNodeHandle(this.refs['innerViewRef']);
+        let handle = ReactNative.findNodeHandle(this.innerViewRef.current);
+        if (!handle) {
+            return null;
+        }
+        if (!NativeModules.UIManager || !NativeModules.UIManager.measure) {
+            return null;
+        }
         NativeModules.UIManager.measure(handle, (x, y, width, height, pageX, pageY) => {
             if (typeof pageX === 'number' && typeof pageY === 'number') { // avoid undefined values on Android devices
                 if (this.state.pageX !== pageX || this.state.pageY !== pageY) {
